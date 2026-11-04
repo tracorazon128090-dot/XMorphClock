@@ -630,12 +630,13 @@ class ClockFaceView(
             canvas.restore()
         }
 
-        if (widgetsAboveDepth) {
-            face.layers.forEachIndexed { index, layer -> if (FaceComposer.isClockLayer(layer.id)) drawLayer(index, layer) }
+        val splitDepth = widgetsAboveDepth || ((depthBitmap != null || depthPresent) && face.layers.any { it.depthFront != null })
+        if (splitDepth) {
+            face.layers.forEachIndexed { index, layer -> if (!inFrontOfDepth(layer)) drawLayer(index, layer) }
             drawingInk = null
             drawingBorderInk = null
             depthDrawer?.invoke(canvas) ?: drawDepth(canvas)
-            face.layers.forEachIndexed { index, layer -> if (!FaceComposer.isClockLayer(layer.id)) drawLayer(index, layer) }
+            face.layers.forEachIndexed { index, layer -> if (inFrontOfDepth(layer)) drawLayer(index, layer) }
         } else {
             face.layers.forEachIndexed { index, layer -> drawLayer(index, layer) }
         }
@@ -649,7 +650,7 @@ class ClockFaceView(
         }
         drawingInk = null
         drawingBorderInk = null
-        if (!widgetsAboveDepth) drawDepth(canvas)
+        if (!splitDepth) drawDepth(canvas)
         if (idleMoving) postOnAnimation { requestLayout() }
         if (animating || idleMoving) postInvalidateOnAnimation()
     }
@@ -1276,6 +1277,16 @@ class ClockFaceView(
         }
 
     var depthDrawer: ((Canvas) -> Unit)? = null
+
+    var depthPresent = false
+        set(value) {
+            if (field == value) return
+            field = value
+            invalidate()
+        }
+
+    private fun inFrontOfDepth(layer: FaceLayer): Boolean =
+        layer.depthFront ?: (widgetsAboveDepth && !FaceComposer.isClockLayer(layer.id))
 
     fun setDepth(bitmap: Bitmap?, opacity: Float, widgetsFront: Boolean = false) {
         widgetsAboveDepth = widgetsFront

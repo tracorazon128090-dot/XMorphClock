@@ -135,6 +135,7 @@ class ClockHost {
                 LiveFaceData.configure(face)
                 bindTiles(view)
                 backdrop?.refresh()
+                backdrop?.reapplyDepth()
                 HookReporter.clockFace(face.name)
                 HookEnv.log("Face reloaded: ${face.name}")
             }

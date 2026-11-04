@@ -44,7 +44,8 @@ data class FaceLayer(
     val sleepStretch: Float? = null,
     val sleepStretchX: Float? = null,
     val activeColor: String? = null,
-    val activeTint: Float? = null
+    val activeTint: Float? = null,
+    val depthFront: Boolean? = null
 ) {
     val isTime: Boolean
         get() = type in TIME_TYPES

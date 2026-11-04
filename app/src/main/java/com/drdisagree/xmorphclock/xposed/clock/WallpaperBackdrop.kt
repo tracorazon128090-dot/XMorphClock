@@ -100,11 +100,17 @@ internal class WallpaperBackdrop(private val context: Context) {
         refresh()
     }
 
+    fun reapplyDepth() {
+        view?.get()?.let { applyDepth(it, depth) }
+    }
+
     private fun applyDepth(target: ClockFaceView, subject: Bitmap?) {
         val front = ModulePrefs.depthWidgetsFront
+        val inside = front || target.face.layers.any { it.depthFront != null }
         if ((subject == null) != (DepthOverlay.subject == null)) HookEnv.log("Depth subject ${if (subject == null) "cleared" else "set"}")
-        DepthOverlay.update(subject, ModulePrefs.depthOpacity, front)
+        DepthOverlay.update(subject, ModulePrefs.depthOpacity, inside)
         target.widgetsAboveDepth = front && subject != null
+        target.depthPresent = inside && subject != null
     }
 
     private fun scheduleMeasure(target: ClockFaceView) {

@@ -39,7 +39,10 @@ object FaceComposer {
         )
         val aod = items.any { it.hasAod } || entries.any { (_, face) -> face.aodLarge != null || face.aodSmall != null }
         return clock.copy(
-            layers = entries.flatMap { (item, face) -> if (item.clock) face.layers else face.layers.map { it.copy(id = prefix(item.id) + it.id) } },
+            layers = entries.flatMap { (item, face) ->
+                if (item.clock) face.layers.map { it.copy(depthFront = item.depthFront) }
+                else face.layers.map { it.copy(id = prefix(item.id) + it.id, depthFront = item.depthFront) }
+            },
             large = tree(ItemState.LARGE, { it.large }) { item, node -> item.large ?: node.placement },
             small = tree(ItemState.SMALL, { it.small }) { item, node -> item.small ?: node.placement },
             aodLarge = if (aod) tree(ItemState.AOD_LARGE, { it.aodLarge ?: it.large }) { item, node -> item.aodLarge ?: item.large ?: node.placement } else null,
@@ -64,7 +67,7 @@ object FaceComposer {
             val smallChild = unscaled(child(small, item), item, ItemState.SMALL)
             if (largeChild == null && smallChild == null) return@let null
             face.copy(
-                layers = face.layers.filter { isClockLayer(it.id) },
+                layers = face.layers.filter { isClockLayer(it.id) }.map { it.copy(depthFront = null) },
                 large = largeChild?.let { placed(it, parts.clock.large.placement) } ?: parts.clock.large,
                 small = smallChild?.let { placed(it, parts.clock.small.placement) } ?: parts.clock.small,
                 aodLarge = parts.clock.aodLarge,
@@ -81,7 +84,7 @@ object FaceComposer {
             val smallChild = unscaled(child(small, item), item, ItemState.SMALL)
             if (largeChild == null && smallChild == null) return@forEach
             val rebuilt = original.copy(
-                layers = face.layers.filter { it.id.startsWith(prefix) }.map { it.copy(id = it.id.removePrefix(prefix)) },
+                layers = face.layers.filter { it.id.startsWith(prefix) }.map { it.copy(id = it.id.removePrefix(prefix), depthFront = null) },
                 large = largeChild?.let { placed(ids(it) { id -> id.removePrefix(prefix) }, original.large.placement) } ?: original.large,
                 small = smallChild?.let { placed(ids(it) { id -> id.removePrefix(prefix) }, original.small.placement) } ?: original.small
             )

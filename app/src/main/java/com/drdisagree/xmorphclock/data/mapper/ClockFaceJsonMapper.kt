@@ -99,7 +99,8 @@ object ClockFaceJsonMapper {
             sleepStretch = if (json.has("sleepStretch")) json.optFloat("sleepStretch", 1f) else null,
             sleepStretchX = if (json.has("sleepStretchX")) json.optFloat("sleepStretchX", 1f) else null,
             activeColor = json.optString("activeColor").ifEmpty { null },
-            activeTint = if (json.has("activeTint")) json.optFloat("activeTint", 0f) else null
+            activeTint = if (json.has("activeTint")) json.optFloat("activeTint", 0f) else null,
+            depthFront = if (json.has("depthFront")) json.optBoolean("depthFront") else null
         )
     }
 
@@ -219,6 +220,7 @@ object ClockFaceJsonMapper {
             sleepStretchX?.let { put("sleepStretchX", it.toDouble()) }
             activeColor?.let { put("activeColor", it) }
             activeTint?.let { put("activeTint", it.toDouble()) }
+            depthFront?.let { put("depthFront", it) }
             if (type == FaceLayerType.CARD || type == FaceLayerType.GAUGE || type == FaceLayerType.IMAGE || type == FaceLayerType.MEDIA_ART || type == FaceLayerType.SPACER) {
                 put("aspect", aspect.toDouble())
                 put("radius", radius.toDouble())

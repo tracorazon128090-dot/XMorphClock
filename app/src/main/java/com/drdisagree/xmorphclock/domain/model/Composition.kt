@@ -24,6 +24,9 @@ data class Composition(
     fun place(id: Int, state: ItemState, placement: FacePlacement): Composition =
         copy(items = items.map { if (it.id == id) it.with(state, placement) else it })
 
+    fun setDepthFront(id: Int, front: Boolean?): Composition =
+        copy(items = items.map { if (it.id == id) it.copy(depthFront = front) else it })
+
     fun move(id: Int, steps: Int): Composition {
         val from = items.indexOfFirst { it.id == id }
         if (from < 0) return this

@@ -223,6 +223,7 @@ private fun ElementActions(layer: FaceLayer, itemKey: String?, position: OrderPo
     if (position != null) {
         OrderBlock(position) { steps -> if (itemKey != null) viewModel.moveGroup(itemKey, steps) else viewModel.moveElement(layer.id, steps) }
     }
+    if (itemKey != null) DepthOrderBlock(viewModel.groupDepth(itemKey)) { viewModel.setGroupDepth(itemKey, it) }
     val grouped = viewModel.groupedMember(layer.id)
     if (itemKey != null || grouped) {
         val name = stringResource(R.string.group_name)
@@ -385,6 +386,7 @@ private fun GroupSettings(state: EditorUiState, key: String, viewModel: EditorVi
                 item { TextTile(stringResource(R.string.visibility_hidden), !shown, { viewModel.setGroupVisible(key, state.scope, false) }) }
             }
         }
+        if (state.scope != EditScope.AOD) DepthOrderBlock(viewModel.groupDepth(key)) { viewModel.setGroupDepth(key, it) }
         if (state.scope != EditScope.AOD) IdleSection(layers, viewModel)
         viewModel.groupPosition(key)?.let { position -> OrderBlock(position) { viewModel.moveGroup(key, it) } }
         if (state.scope != EditScope.AOD && ItemGroups.itemId(key) != null) {

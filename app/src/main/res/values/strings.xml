@@ -392,6 +392,10 @@
     <string name="color_solid">Solid</string>
     <string name="color_gradient">Gradient</string>
     <string name="label_order">Order</string>
+    <string name="label_depth_order">Depth order</string>
+    <string name="depth_order_auto">Auto</string>
+    <string name="depth_order_front">In front</string>
+    <string name="depth_order_behind">Behind</string>
     <string name="order_back">Back</string>
     <string name="order_front">Front</string>
     <string name="label_elements">Elements</string>

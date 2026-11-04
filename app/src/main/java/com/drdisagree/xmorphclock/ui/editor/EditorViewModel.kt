@@ -352,6 +352,18 @@ class EditorViewModel(
         commitComposition(face, draft, split.copy(composition = split.composition.move(target.id, steps)))
     }
 
+    fun groupDepth(key: String): Boolean? =
+        state.value.draft?.parts?.composition?.items?.firstOrNull { matchesGroup(it, key) }?.depthFront
+
+    fun setGroupDepth(key: String, front: Boolean?) {
+        val current = state.value
+        val face = current.face ?: return
+        val draft = current.draft ?: return
+        val split = FaceComposer.decompose(face, draft.parts)
+        val target = split.composition.items.firstOrNull { matchesGroup(it, key) } ?: return
+        commitComposition(face, draft, split.copy(composition = split.composition.setDepthFront(target.id, front)))
+    }
+
     fun groupLayers(key: String): List<FaceLayer> = state.value.face?.let { FaceBuilder.groupLayers(it, key) }.orEmpty()
 
     fun replaceImage(id: String, uri: String) {

@@ -142,7 +142,7 @@ object FaceEditor {
     fun groupIn(root: FaceNode?, belongs: (String) -> Boolean): Boolean = root != null && groupRoot(root, belongs)?.placement?.hidden == false
 
     fun groupChanged(face: ClockFace, default: ClockFace, belongs: (String) -> Boolean): Boolean {
-        if (face.layers.filter { belongs(it.id) } != default.layers.filter { belongs(it.id) }) return true
+        if (face.layers.filter { belongs(it.id) }.map { it.copy(depthFront = null) } != default.layers.filter { belongs(it.id) }.map { it.copy(depthFront = null) }) return true
         fun shape(root: FaceNode): FaceNode? = groupRoot(root, belongs)?.let { withPlacement(it, FacePlacement()) }
         return shape(face.large) != shape(default.large) || shape(face.small) != shape(default.small)
     }
@@ -154,7 +154,7 @@ object FaceEditor {
             return replaceGroup(current, belongs) { node -> withPlacement(source, node.placement) }
         }
         return face.copy(
-            layers = face.layers.filter { !belongs(it.id) || it.id in defaults }.map { defaults[it.id] ?: it },
+            layers = face.layers.filter { !belongs(it.id) || it.id in defaults }.map { current -> defaults[current.id]?.copy(depthFront = current.depthFront) ?: current },
             large = tree(face.large, default.large),
             small = tree(face.small, default.small)
         )

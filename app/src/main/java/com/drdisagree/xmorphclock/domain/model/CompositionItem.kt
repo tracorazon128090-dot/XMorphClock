@@ -10,10 +10,11 @@ data class CompositionItem(
     val aodSmall: FacePlacement? = null,
     val hidden: Set<ItemState> = emptySet(),
     val largeScale: Float = 1f,
-    val smallScale: Float = 1f
+    val smallScale: Float = 1f,
+    val depthFront: Boolean? = null
 ) {
     val isDefault: Boolean
-        get() = large == null && small == null && aodLarge == null && aodSmall == null && hidden.isEmpty() && largeScale == 1f && smallScale == 1f
+        get() = large == null && small == null && aodLarge == null && aodSmall == null && hidden.isEmpty() && largeScale == 1f && smallScale == 1f && depthFront == null
 
     fun visible(state: ItemState): Boolean = state !in hidden
 
